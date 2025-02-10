@@ -130,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               SizedBox(height: 50,),
-              Text("\n$output")
+              Text("\n$output", style: TextStyle(fontSize: 25),)
             ],
           ),
         ),
