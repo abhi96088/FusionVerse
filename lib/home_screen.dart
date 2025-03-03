@@ -103,124 +103,126 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.deepPurple,
         elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 20),
-            ///@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ from - to dropdowns @@@@@@@@@@@@@@@@@@@@@@@@@@///
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4)],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  //----------> from dropdown button
-                  DropdownButton(
-                    value: from == "From" ? null : from,
-                    hint: Text(from),
-                    icon: Icon(Icons.arrow_drop_down),
-                    items: languages.map((String dropDownItem) {
-                      return DropdownMenuItem(
-                        value: dropDownItem,
-                        child: Text(dropDownItem),
-                      );
-                    }).toList(),
-                    onChanged: (String? value) {
-                      setState(() {
-                        from = value!;
-                      });
-                    },
-                  ),
-                  //------> Swap icon button
-                  IconButton(
-                    icon: Icon(Icons.swap_horiz, size: 30, color: Colors.deepPurple),
-                    onPressed: (from != "From" && to != "To") ? swapLanguages : null,
-                  ),
-                  //----------> to dropdown button
-                  DropdownButton(
-                    value: to == "To" ? null : to,
-                    hint: Text(to),
-                    icon: Icon(Icons.arrow_drop_down),
-                    items: languages.map((String dropDownItem) {
-                      return DropdownMenuItem(
-                        value: dropDownItem,
-                        child: Text(dropDownItem),
-                      );
-                    }).toList(),
-                    onChanged: (String? value) {
-                      setState(() {
-                        to = value!;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-            ///@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ text field to take text to translate @@@@@@@@@@@@@@@@@@@@@@@@///
-            TextField(
-              controller: textController,
-              decoration: InputDecoration(
-                labelText: "Enter text to translate",
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              maxLines: 3,
-            ),
-            SizedBox(height: 20),
-            ///@@@@@@@@@@@@@@@@@@@@@@@@@@ translate button @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@///
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  translate(getLangCode(from), getLangCode(to), textController.text.trim());
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  backgroundColor: Colors.deepPurple,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: 20),
+              ///@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ from - to dropdowns @@@@@@@@@@@@@@@@@@@@@@@@@@///
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4)],
                 ),
-                child: Text("Translate", style: TextStyle(fontSize: 18, color: Colors.white)),
-              ),
-            ),
-            SizedBox(height: 20),
-            ///@@@@@@@@@@@@@@@@@@@@@@@ container to show translated text @@@@@@@@@@@@@@@@@@@///
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4)],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Text(
-                      output == "" ? "Your translated text will appear here." : output,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    //----------> from dropdown button
+                    DropdownButton(
+                      value: from == "From" ? null : from,
+                      hint: Text(from),
+                      icon: Icon(Icons.arrow_drop_down),
+                      items: languages.map((String dropDownItem) {
+                        return DropdownMenuItem(
+                          value: dropDownItem,
+                          child: Text(dropDownItem),
+                        );
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          from = value!;
+                        });
+                      },
                     ),
-                  ),
-                  if (output.isNotEmpty) // Show button only if there's text
-                    // show an speaker button to read aloud the translated text
+                    //------> Swap icon button
                     IconButton(
-                      icon: Icon(Icons.volume_up, size: 30, color: Colors.deepPurple),
-                      onPressed: speak,
+                      icon: Icon(Icons.swap_horiz, size: 30, color: Colors.deepPurple),
+                      onPressed: (from != "From" && to != "To") ? swapLanguages : null,
                     ),
-                ],
+                    //----------> to dropdown button
+                    DropdownButton(
+                      value: to == "To" ? null : to,
+                      hint: Text(to),
+                      icon: Icon(Icons.arrow_drop_down),
+                      items: languages.map((String dropDownItem) {
+                        return DropdownMenuItem(
+                          value: dropDownItem,
+                          child: Text(dropDownItem),
+                        );
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          to = value!;
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
+              SizedBox(height: 20),
+              ///@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ text field to take text to translate @@@@@@@@@@@@@@@@@@@@@@@@///
+              TextField(
+                controller: textController,
+                decoration: InputDecoration(
+                  labelText: "Enter text to translate",
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                maxLines: 3,
+              ),
+              SizedBox(height: 20),
+              ///@@@@@@@@@@@@@@@@@@@@@@@@@@ translate button @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@///
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    translate(getLangCode(from), getLangCode(to), textController.text.trim());
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                    backgroundColor: Colors.deepPurple,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  child: Text("Translate", style: TextStyle(fontSize: 18, color: Colors.white)),
+                ),
+              ),
+              SizedBox(height: 20),
+              ///@@@@@@@@@@@@@@@@@@@@@@@ container to show translated text @@@@@@@@@@@@@@@@@@@///
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4)],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        output == "" ? "Your translated text will appear here." : output,
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    if (output.isNotEmpty) // Show button only if there's text
+                      // show an speaker button to read aloud the translated text
+                      IconButton(
+                        icon: Icon(Icons.volume_up, size: 30, color: Colors.deepPurple),
+                        onPressed: speak,
+                      ),
+                  ],
+                ),
 
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );
