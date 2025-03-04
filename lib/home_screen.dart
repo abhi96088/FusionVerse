@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:fusionverse/language_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:translator/translator.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,30 +14,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   // variable to store list of languages
   var languages = ["Hindi", "English", "Bengali", "Telugu", "Marathi", "Tamil", "Urdu", "Gujarati", "Malayalam", "Odia", "Punjabi", "Kannada", "Assamese", "Maithili"];
-  var from = "From";  // value at from dropdown
-  var to = "To";  // value at to dropdown
-  var output = "";  // variable to store output
 
   // controller to get text of text field
   TextEditingController textController = TextEditingController();
 
   FlutterTts flutterTts = FlutterTts();   // initialized text to speech
 
-  // function to translate the entered text
-  void translate(String source, String destination, String input) async {
-    GoogleTranslator translator = GoogleTranslator();   // initialize google translator
-    var translation = await translator.translate(input, from: source, to: destination); // translate the text
-    setState(() {
-      output = translation.text.toString();   // set translated text as output
-    });
 
-    // check if language not provided
-    if (source == '--' || destination == '--') {
-      setState(() {
-        output = "Failed to translate";
-      });
-    }
-  }
 
   // function to get language code
   String getLangCode(String lang) {
@@ -71,21 +56,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return '--';
   }
 
-  // function to swap language vales of from and to when clicked on swap icon
-  void swapLanguages() {
-    if (from != "From" && to != "To") {
-      setState(() {
-        var temp = from;
-        from = to;
-        to = temp;
-      });
-    }
-  }
 
   // function to speak the translated text
-  void speak() async {
+  void speak(BuildContext context) async {
+    final toLanguage = context.read<LanguageProvider>().to;
+    String output = context.read<LanguageProvider>().output;
     if (output.isNotEmpty) {
-      await flutterTts.setLanguage(getLangCode(to)); // Set language
+      await flutterTts.setLanguage(getLangCode(toLanguage)); // Set language
       await flutterTts.setPitch(1.0); // Adjust pitch (1.0 = normal)
       await flutterTts.speak(output); // Speak the translated text
     }
@@ -122,9 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     //----------> from dropdown button
-                    DropdownButton(
-                      value: from == "From" ? null : from,
-                      hint: Text(from),
+                    Consumer(builder: (ctx, LanguageProvider provider, _) => DropdownButton(
+                      value: provider.from == "From" ? null : provider.from,
+                      hint: Text(provider.from),
                       icon: Icon(Icons.arrow_drop_down),
                       items: languages.map((String dropDownItem) {
                         return DropdownMenuItem(
@@ -133,20 +110,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       }).toList(),
                       onChanged: (String? value) {
-                        setState(() {
-                          from = value!;
-                        });
+                        provider.updateFrom(value!);
                       },
+                    ),
                     ),
                     //------> Swap icon button
                     IconButton(
                       icon: Icon(Icons.swap_horiz, size: 30, color: Colors.deepPurple),
-                      onPressed: (from != "From" && to != "To") ? swapLanguages : null,
+                      onPressed: (){
+                        final provider = context.read<LanguageProvider>();
+                        if(provider.from != "From" && provider.to != "To"){
+                          provider.swapLanguage();
+                        }
+                      }
                     ),
                     //----------> to dropdown button
-                    DropdownButton(
-                      value: to == "To" ? null : to,
-                      hint: Text(to),
+                    Consumer(builder: (ctx, LanguageProvider provider, _) => DropdownButton(
+                      value: provider.to == "To" ? null : provider.to,
+                      hint: Text(provider.to),
                       icon: Icon(Icons.arrow_drop_down),
                       items: languages.map((String dropDownItem) {
                         return DropdownMenuItem(
@@ -155,11 +136,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       }).toList(),
                       onChanged: (String? value) {
-                        setState(() {
-                          to = value!;
-                        });
+                        provider.updateTo(value!);
                       },
                     ),
+                    )
                   ],
                 ),
               ),
@@ -181,7 +161,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    translate(getLangCode(from), getLangCode(to), textController.text.trim());
+                    var provider = context.read<LanguageProvider>();
+                    provider.translate(getLangCode(provider.from), getLangCode(provider.to), textController.text.toString().trim());
                   },
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 15),
@@ -205,18 +186,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: Text(
-                        output == "" ? "Your translated text will appear here." : output,
+                      child: Consumer<LanguageProvider>(builder: (_, provider, __) => Text(
+                        provider.output.isEmpty ? "Your translated text will appear here." : provider.output,
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
-                      ),
+                      ),)
                     ),
-                    if (output.isNotEmpty) // Show button only if there's text
-                      // show an speaker button to read aloud the translated text
-                      IconButton(
-                        icon: Icon(Icons.volume_up, size: 30, color: Colors.deepPurple),
-                        onPressed: speak,
-                      ),
+                   Consumer<LanguageProvider>(builder: (_, provider, __){
+                     return provider.output.isNotEmpty ? IconButton(
+                         onPressed: () => speak(context),
+                         icon: Icon(Icons.volume_up, size: 30, color: Colors.deepPurple,)) : SizedBox();
+                   })
                   ],
                 ),
 

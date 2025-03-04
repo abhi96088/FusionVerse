@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fusionverse/home_screen.dart';
+import 'package:fusionverse/language_provider.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  SystemChrome.setPreferredOrientations(
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations(
     [
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown
     ]
   );
-  runApp(const MyApp());
+  runApp(
+      ChangeNotifierProvider(
+          create: (context) => LanguageProvider(),
+        child: MyApp()),
+      );
 }
 
 class MyApp extends StatelessWidget {
