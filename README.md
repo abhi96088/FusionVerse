@@ -9,7 +9,7 @@ A powerful and efficient **multi-language translator app** built with Flutter, f
 - ⚡ **Optimized performance using Provider**  
 
 ## 📸 Screenshots  
-<img src="home.png" alt="Home Screen" width="300"/>  <img src="languages.png" alt="Supported Languages" width="300"/>  <img src="english to tamil.png" alt="English to tamil" width="300"/>  <img src="gujarati to hindi.png" alt="Gujarati to hindi" width="300"/>  <img src="bengali to english.png" alt="Bengali to english" width="300"/>  <img src="english to telugu.png" alt="English to telugu" width="300"/>  
+<img src="home.png" alt="Home Screen" width="300"/>  <img src="languages.png" alt="Supported Languages" width="300"/>  <img src="english to tamil.png" alt="English to tamil" width="300"/>  <img src="gujarati to hindi.png" alt="Gujarati to hindi" width="300"/> 
 
 ## 📌 Supported Languages  
 ✅ Hindi  
